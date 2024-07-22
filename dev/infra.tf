@@ -250,45 +250,45 @@ resource "aws_lb_listener" "http" {
 }
 
 # Launch EC2 instances
-# resource "aws_instance" "web" {
-#   count         = 2
-#   ami           = "ami-04a81a99f5ec58529" # Ubuntu Server 20.04 LTS (HVM), SSD Volume Type - us-east-1
-#   instance_type = "t2.micro"
-#   subnet_id     = element(aws_subnet.public.*.id, count.index)
-#   vpc_security_group_ids = [aws_security_group.web_sg.name]
+resource "aws_instance" "web" {
+  count         = 2
+  ami           = "ami-04a81a99f5ec58529" # Ubuntu Server 20.04 LTS (HVM), SSD Volume Type - us-east-1
+  instance_type = "t2.micro"
+  subnet_id     = element(aws_subnet.public.*.id, count.index)
 
-#   tags = {
-#     Name = "kapersky-${var.region}-${var.environment}-web-${count.index + 1}"
-#   }
 
-#   user_data = <<-EOF
-#               #!/bin/bash
-#               apt-get update
-#               apt-get install -y \
-#                 apt-transport-https \
-#                 ca-certificates \
-#                 curl \
-#                 gnupg-agent \
-#                 software-properties-common
-#               curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-#               add-apt-repository \
-#                 "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-#                 $(lsb_release -cs) \
-#                 stable"
-#               apt-get update
-#               apt-get install -y docker-ce docker-ce-cli containerd.io
-#               systemctl start docker
-#               systemctl enable docker
-#             EOF
-# }
+  tags = {
+    Name = "kapersky-${var.region}-${var.environment}-web-${count.index + 1}"
+  }
 
-# Register instances with ALB Target Group
-# resource "aws_lb_target_group_attachment" "web" {
-#   count            = 2
-#   target_group_arn = aws_lb_target_group.main.arn
-#   target_id        = element(aws_instance.web.*.id, count.index)
-#   port             = 80
-# }
+  user_data = <<-EOF
+              #!/bin/bash
+              apt-get update
+              apt-get install -y \
+                apt-transport-https \
+                ca-certificates \
+                curl \
+                gnupg-agent \
+                software-properties-common
+              curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+              add-apt-repository \
+                "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+                $(lsb_release -cs) \
+                stable"
+              apt-get update
+              apt-get install -y docker-ce docker-ce-cli containerd.io
+              systemctl start docker
+              systemctl enable docker
+            EOF
+}
+
+#Register instances with ALB Target Group
+resource "aws_lb_target_group_attachment" "web" {
+  count            = 2
+  target_group_arn = aws_lb_target_group.main.arn
+  target_id        = element(aws_instance.web.*.id, count.index)
+  port             = 80
+}
 
 # DB Subnet Group
 resource "aws_db_subnet_group" "main" {
