@@ -46,6 +46,27 @@ Initialize the Terraform configuration. This will download the necessary provide
 terraform init
 ```
 
+Plan the Deployment
+Generate an execution plan. This will show you what actions Terraform will take to create the resources.
+
+```hcl
+terraform plan
+```
+
+Apply the Configuration
+Apply the Terraform configuration to create the resources. This will prompt you for confirmation before proceeding.
+
+```hcl
+terraform apply
+```
+
+Destroy the Infrastructure
+To destroy the infrastructure created by Terraform, use the following command:
+
+```hcl
+terraform destroy
+```
+
 Backend Configuration
 The Terraform state is stored in an S3 bucket specified in backend.tf:
 
@@ -60,5 +81,7 @@ terraform {
   }
 }
 ```
+
+
 
 
