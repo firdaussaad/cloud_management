@@ -36,11 +36,29 @@ Example `terraform.tfvars`:
 region = "us-east-1"
 environment = "dev"
 db_password = "your_secure_password"
+```
 
 Usage
 Initialize Terraform
 Initialize the Terraform configuration. This will download the necessary providers and set up the backend configuration.
 
-`terraform init`
+```hcl
+terraform init
+```
+
+Backend Configuration
+The Terraform state is stored in an S3 bucket specified in backend.tf:
+
+```hcl
+terraform {
+  backend "s3" {
+    bucket         = "kaperski-shop-bucket"
+    key            = "terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "terraform-lock-table" # Optional, for state locking
+  }
+}
+```
 
 
